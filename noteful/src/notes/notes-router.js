@@ -16,28 +16,10 @@ notesRouter
             })
             .catch(next)
     })
-    .delete((req, res, next) => {
-        const knexInstance = req.app.get('db');
-        NotesService.deleteNote(knexInstance, req.params.noteId)
-        .then(note => {
-            if(!bookmark) {
-                return res.status(404).json({
-                  error: { message: `bookmark doesn't exist`}
-                });
-              }
-            res
-              .status(204)
-              .end();
-        })
-        .catch(next)
-    })
-
-notesRouter
-    .route('/add-note')
     .post(bodyParser, (req, res, next) => {
-        const { title, date_modified, content, folderId } = req.body;
-        const newNote = { title, date_modified, content, folderId };
-        if(!title || !date_modified || !folderId) {
+        const { name, content, folderid } = req.body;
+        const newNote = { name, content, folderid: folderid };
+        if(!name || !folderid) {
             return res
                 .status(400)
                 .send('Invalid data');
@@ -53,33 +35,7 @@ notesRouter
     });
 
 notesRouter
-    .route('/api/folder/:FolderId')
-    .get((req, res, next) => {
-        const knexInstance = req.app.get('db');
-        NotesService.getNotesByFolderId(knexInstance, req.params.FolderId)
-            .then(notes => {
-                res.json(notes)
-    })
-    .catch(next)
-})
-    .delete((req, res, next) => {
-        const knexInstance = req.app.get('db');
-        NotesService.deleteNote(knexInstance, req.params.noteId)
-        .then(note => {
-            if(!bookmark) {
-                return res.status(404).json({
-                  error: { message: `bookmark doesn't exist`}
-                });
-              }
-            res
-              .status(204)
-              .end();
-        })
-        .catch(next)
-    })
-
-notesRouter
-    .route('/api/note/:noteId')
+    .route('/:noteId')
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         NotesService.getNoteById(knexInstance, req.params.noteId)
@@ -92,14 +48,24 @@ notesRouter
         const knexInstance = req.app.get('db');
         NotesService.deleteNote(knexInstance, req.params.noteId)
         .then(note => {
-            if(!bookmark) {
+            if(!note) {
                 return res.status(404).json({
-                  error: { message: `bookmark doesn't exist`}
+                  error: { message: `note doesn't exist`}
                 });
               }
             res
               .status(204)
-              .end();
+              .send('deleted');
+        })
+        .catch(next)
+    })
+notesRouter
+    .route('/:folderId')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        NotesService.getByFolderId(knexInstance, req.params.noteId)
+        .then(notes => {
+            res.json(notes)
         })
         .catch(next)
     })

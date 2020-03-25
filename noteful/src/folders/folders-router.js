@@ -16,13 +16,10 @@ foldersRouter
             })
             .catch(next)
     })
-
-foldersRouter
-    .route('/api/add-folder')
     .post(bodyParser, (req, res, next) => {
-        const { title } = req.body;
-        const newFolder = {title};
-        if(!title) {
+        const { name } = req.body;
+        const newFolder = {name};
+        if(!name) {
           return res
             .status(400)
             .send('Invalid data')  
@@ -38,7 +35,7 @@ foldersRouter
     });
 
     foldersRouter
-        .route('/api/folder/:id')
+        .route('/:id')
         .get((req, res, next) => {
             const knexInstance = req.app.get('db')
             FoldersService.getById(knexInstance, req.params.id)
@@ -50,7 +47,7 @@ foldersRouter
                     }
                     res.json({
                         id: folder.id,
-                        title: xss(folder.title),
+                        name: xss(folder.name),
                     })
                 })
                 .catch(next);

@@ -71,7 +71,7 @@ describe('Folders endpoints', () => {
     describe('POST /add-folder', () => {
         it('creates a new folder, responding with a 201 and a new folder', () => {
             const newFolder = {
-                title: 'NewFolder'
+                name: 'NewFolder'
             };
             return supertest(app)
                 .post('/api/add-folder')
@@ -79,7 +79,7 @@ describe('Folders endpoints', () => {
                 .expect(201)
                 .expect(res => {
                     expect(res.body).to.have.property('id')
-                    expect(res.body.title).to.eql(newFolder.title)
+                    expect(res.body.name).to.eql(newFolder.name)
                 })
                 .then(res => {
                     supertest(app)
@@ -87,9 +87,9 @@ describe('Folders endpoints', () => {
                         .expect(res.body)
                 })
         });
-        it('responds with 400 when no title', () => {
+        it('responds with 400 when no name', () => {
             const newFolder = {
-                title: null,
+                name: null,
             };
             return supertest(app)
                 .post('/api/add-folder')
